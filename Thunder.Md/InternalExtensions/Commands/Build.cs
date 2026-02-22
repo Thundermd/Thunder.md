@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Thunder.Md.Extensions;
 using Thunder.Md.Extensions.Config;
 using Thunder.Md.Readers;
+using Thunder.Md.Readers.Markdown;
 using Thunder.Md.Writers;
 
 public class Build: ICommand{

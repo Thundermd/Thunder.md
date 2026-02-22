@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 public class CustomProvider: ILoggerProvider{
     public void Dispose(){
-        // TODO release managed resources here
+        // Nothing to do
     }
 
     public ILogger CreateLogger(string categoryName){

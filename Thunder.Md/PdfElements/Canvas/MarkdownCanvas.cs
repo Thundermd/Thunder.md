@@ -8,6 +8,7 @@ using Thunder.Md.Extensions;
 using Thunder.Md.Extensions.Config;
 using Thunder.Md.Extensions.PdfElements;
 using Thunder.Md.Readers;
+using Thunder.Md.Readers.Markdown;
 
 public class MarkdownCanvas: ICanvasElement{
     public string FilePath{ get; }
