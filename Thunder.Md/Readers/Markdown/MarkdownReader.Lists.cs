@@ -91,7 +91,7 @@ public partial class MarkdownReader{
                 }
             }
 
-            if(!TryReadText([new EndChar('\n', 1)], EndLineManagement.Ignore, true, null, out TextWrapper? text)){
+            if(!TryReadText([new EndChar('\n', 1)], EndLineManagement.Ignore, true, null, out TextWrapper? text, out _)){
                 break;
             }
 

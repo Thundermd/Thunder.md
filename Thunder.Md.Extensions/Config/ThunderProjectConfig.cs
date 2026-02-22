@@ -17,7 +17,7 @@ public class ThunderProjectConfig{
 
     public ThunderColor TextColor{ get; set; } = ThunderColor.Black;
     public ThunderColor BackgroundColor{ get; set; } = ThunderColor.White;
-    public ThunderColor[] Colors{ get; set; } = [new(200, 30, 30), new(30, 30, 200), new(30, 200, 30)];
+    public ThunderColor[] Colors{ get; set; } = [new(00, 0x4F, 0x7C), new(30, 30, 200), new(30, 200, 30)];
 
     public float FontSize{ get; set; } = 11;
     public int PaperHeight{ get; set; }
@@ -80,7 +80,17 @@ public class ThunderProjectConfig{
     public List<string> ReferencePaths { get; } = new();
     
     public CitationConfig Citation{ get; set; }  = new();
-    
+
+    public ThunderColor? ContrastColorTo(ThunderColor color){
+        float value = byte.Max(color.R, byte.Max(color.G, color.B)) / 255f;
+
+        float backgroundValue = byte.Max(BackgroundColor.R, byte.Max(BackgroundColor.G, BackgroundColor.B)) / 255f;
+        float textColorValue = byte.Max(TextColor.R, byte.Max(TextColor.G, TextColor.B)) / 255f;
+
+        return Math.Abs(value - backgroundValue) > Math.Abs(value - textColorValue) 
+            ? BackgroundColor 
+            : TextColor;
+    }
 }
 
 public enum Alignment{

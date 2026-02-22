@@ -20,7 +20,7 @@ public partial class MarkdownReader{
     }
     
     private bool TryReadTextNotFormatted(EndChar[] endChars, EndLineManagement endLineManagement, bool reduceSpaces,
-                                         char? firstChar, [NotNullWhen(true)] out string? value){
+                                         char? firstChar, [NotNullWhen(true)] out string? value, out char lastChar){
         if(endChars.Length == 0){
             throw new ArgumentException("endChars must not be empty", nameof(endChars));
         }
@@ -42,6 +42,7 @@ public partial class MarkdownReader{
             if(c == '\0'){
                 _logger.LogError(_fileReader, "Invalid '\0' character in file");
                 value = null;
+                lastChar = c;
                 return false;
             }
 
@@ -86,6 +87,7 @@ public partial class MarkdownReader{
                     break;
                     case EndLineManagement.Error:
                         value = null;
+                        lastChar = c;
                         return false;
                     default:
                         throw new UnreachableException();
@@ -112,12 +114,13 @@ public partial class MarkdownReader{
 
         _fileReader.DeleteLastSave();
 
+        lastChar = c;
         return true;
     }
 
     private bool TryReadText(EndChar[] endChars, EndLineManagement endLineManagement, bool reduceSpaces,
                              char? firstChar,
-                             [NotNullWhen(true)] out TextWrapper? result){
+                             [NotNullWhen(true)] out TextWrapper? result, out char lastChar){
         if(endChars.Length == 0){
             throw new ArgumentException("endChars must not be empty", nameof(endChars));
         }
@@ -139,6 +142,7 @@ public partial class MarkdownReader{
 
             if(c == '\0'){
                 _logger.LogError(_fileReader, "Invalid '\0' character in file");
+                lastChar = c;
                 return false;
             }
 
@@ -182,6 +186,7 @@ public partial class MarkdownReader{
                         isInSpace = true;
                     break;
                     case EndLineManagement.Error:
+                        lastChar = c;
                         return false;
                     default:
                         throw new UnreachableException();
@@ -218,7 +223,7 @@ public partial class MarkdownReader{
                 }
 
                 EndChar[] newEndChars = [..endChars, new('*', bold ? 2 : 1)];
-                if(!TryReadText(newEndChars, endLineManagement, reduceSpaces, null, out TextWrapper? innerTextWrapper)){
+                if(!TryReadText(newEndChars, endLineManagement, reduceSpaces, null, out TextWrapper? innerTextWrapper, out lastChar)){
                     result = null;
                     return false;
                 }
@@ -247,7 +252,7 @@ public partial class MarkdownReader{
 
 
                 EndChar[] newEndChars = [..endChars, new('_', 2)];
-                if(!TryReadText(newEndChars, endLineManagement, reduceSpaces, null, out TextWrapper? innerTextWrapper)){
+                if(!TryReadText(newEndChars, endLineManagement, reduceSpaces, null, out TextWrapper? innerTextWrapper, out lastChar)){
                     result = null;
                     return false;
                 }
@@ -272,7 +277,7 @@ public partial class MarkdownReader{
 
 
                 EndChar[] newEndChars = [..endChars, new('-', 2)];
-                if(!TryReadText(newEndChars, endLineManagement, reduceSpaces, null, out TextWrapper? innerTextWrapper)){
+                if(!TryReadText(newEndChars, endLineManagement, reduceSpaces, null, out TextWrapper? innerTextWrapper, out lastChar)){
                     result = null;
                     return false;
                 }
@@ -297,7 +302,7 @@ public partial class MarkdownReader{
 
 
                 EndChar[] newEndChars = [..endChars, new('$', 2)];
-                if(!TryReadTextNotFormatted(newEndChars, endLineManagement, reduceSpaces, null, out string? mathStr)){
+                if(!TryReadTextNotFormatted(newEndChars, endLineManagement, reduceSpaces, null, out string? mathStr, out lastChar)){
                     result = null;
                     return false;
                 }
@@ -333,6 +338,7 @@ public partial class MarkdownReader{
 
         _fileReader.DeleteLastSave();
 
+        lastChar = c;
         return true;
     }
 }

@@ -29,7 +29,7 @@ public partial class MarkdownReader{
         }
 
         if(!char.IsWhiteSpace(c) || !TryReadText([new EndChar('\n', 1)], EndLineManagement.Ignore, true, null,
-                                                 out TextWrapper? textElement)){
+                                                 out TextWrapper? textElement, out _)){
             pdfElement = null;
             return false;
         }

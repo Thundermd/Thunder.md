@@ -22,7 +22,7 @@ public partial class MarkdownReader{
         isDirect = c == '[';
         if(!isDirect){
             if(!TryReadText([new EndChar(']', 1)], EndLineManagement.Error, true, c,
-                            out TextWrapper? innerTextWrapper)){
+                            out TextWrapper? innerTextWrapper, out _)){
                 canvasElement = null;
                 return false;
             }
@@ -38,7 +38,7 @@ public partial class MarkdownReader{
 
         if(!TryReadTextNotFormatted([new EndChar(isDirect ? ']' : ')', isDirect ? 2 : 1)], EndLineManagement.Error,
                                     true, null,
-                                    out string? file)){
+                                    out string? file, out _)){
             canvasElement = null;
             return false;
         }

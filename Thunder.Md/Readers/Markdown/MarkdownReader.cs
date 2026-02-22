@@ -58,7 +58,7 @@ public partial class MarkdownReader{
             if(c == '$'){
                 if(_fileReader.TryGetNext(out char tempC)
                 && tempC == '$'
-                && TryReadTextNotFormatted([new('$', 2)], EndLineManagement.Ignore, false, null, out string? mathStr)
+                && TryReadTextNotFormatted([new('$', 2)], EndLineManagement.Ignore, false, null, out string? mathStr, out _)
                   ){
                     yield return new MathContainer(mathStr);
                     continue;
@@ -67,7 +67,7 @@ public partial class MarkdownReader{
                 RecallOrError();
             }
 
-            if(c == '-' || c == '*' || char.IsLetterOrDigit(c)){
+            if(_unorderedListChars.Contains(c) || char.IsLetterOrDigit(c)){
                 if(TryReadList(c, out ListElement? listElement)){
                     yield return listElement;
                     continue;
@@ -76,7 +76,16 @@ public partial class MarkdownReader{
                 RecallOrError();
             }
 
-            if(!TryReadText([new EndChar('\n', 2)], EndLineManagement.ToSpace, true, c, out TextWrapper? paragraph)){
+            if(c == '|'){
+                if(TryReadTable(out TableElement? tableElement)){
+                    yield return tableElement;
+                    continue;
+                }
+                
+                RecallOrError();
+            }
+
+            if(!TryReadText([new EndChar('\n', 2)], EndLineManagement.ToSpace, true, c, out TextWrapper? paragraph, out _)){
                 RecallOrError();
                 _logger.LogError(_fileReader, "Can not read paragraph");
                 continue;

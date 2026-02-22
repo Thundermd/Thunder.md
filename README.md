@@ -3,7 +3,6 @@
 ## Features
 
 ## Planed Features
-- Tables
 - Inline Canvas
 - complete config file
 - additional data to canvas with '@' behind file
@@ -11,6 +10,7 @@
   - for csv files
   - (For reference list filter)
 - Complete Extension support
+- diffrent unordered table icons
 - templates
 - graphs (from csv file)
 - global config

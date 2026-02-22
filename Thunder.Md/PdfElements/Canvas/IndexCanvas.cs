@@ -39,19 +39,25 @@ public abstract class IndexCanvas: ICanvasElement{
     public static bool Create(ExtensionArgs args, string url, ITextElement? altText,
                               [NotNullWhen(true)] out ICanvasElement? canvasElement){
         var simplified = Path.GetFileNameWithoutExtension(url).Trim().ToLower();
-        if(simplified == "content"){
-            canvasElement = new SectionIndex();
-        } else if(simplified == "graphics"){
-            canvasElement = new GraphicsIndex();
-        } else if(simplified == "math"){
-            canvasElement = new MathIndex();
-        } else if(simplified == "table"){
-            canvasElement = new TableIndex();
-        } else if(simplified == "references"){
-            canvasElement = new ReferenceIndex(altText?.Text);
-        } else{
-            canvasElement = null;
-            return false;
+        switch(simplified){
+            case "content" or "sections":
+                canvasElement = new SectionIndex();
+            break;
+            case "graphics" or "figures":
+                canvasElement = new GraphicsIndex();
+            break;
+            case "math" or "equations" or "formulas":
+                canvasElement = new MathIndex();
+            break;
+            case "table" or "tables":
+                canvasElement = new TableIndex();
+            break;
+            case "references":
+                canvasElement = new ReferenceIndex(altText?.Text);
+            break;
+            default:
+                canvasElement = null;
+                return false;
         }
 
         return true;
