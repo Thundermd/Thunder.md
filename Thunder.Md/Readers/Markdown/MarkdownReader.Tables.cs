@@ -48,11 +48,15 @@ public partial class MarkdownReader{
 
             _fileReader.DeleteLastSave();
         }
+        
         RecallOrErrorPop();
         _fileReader.Save();
         TextWrapper? caption = null;
         if(_fileReader.TryGetNext(out c) && c == '[' && TryReadText([new EndChar(']', 1)], EndLineManagement.Error, true, null, out TextWrapper? captionText, out _)){
             caption = captionText;
+            _fileReader.DeleteLastSave();
+        } else{
+            RecallOrErrorPop();
         }
 
         if(rows.Count == 0){
@@ -60,8 +64,8 @@ public partial class MarkdownReader{
             return false;
         }
 
-        var height = rows.Count;
-        var minWidth = rows.Min(x => x.Count);
+        int height = rows.Count;
+        int minWidth = rows.Min(x => x.Count);
         if(rows.Any(x => x.Count != minWidth)){
             _logger.LogWarning(_fileReader, "Table has invalid format. Not all rows have the same amount of cells. Maybe some cells are missing in the final table.");
         }

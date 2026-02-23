@@ -22,7 +22,13 @@ public class ExtensionLoader{
     private readonly Dictionary<string, ThunderExtension> _extensions = new(StringComparer.InvariantCultureIgnoreCase);
     private readonly Dictionary<string, CanvasCreator> _canvasCreatorsFileExtensions = new(StringComparer.InvariantCultureIgnoreCase);
     private readonly Dictionary<string, CanvasCreator> _canvasCreatorsProtocols = new(StringComparer.InvariantCultureIgnoreCase);
+    
+    
+    private readonly Dictionary<string, InlineCanvasCreator> _inlineCanvasCreatorsFileExtensions = new(StringComparer.InvariantCultureIgnoreCase);
+    private readonly Dictionary<string, InlineCanvasCreator> _inlineCanvasCreatorsProtocols = new(StringComparer.InvariantCultureIgnoreCase);
+    
     private readonly Dictionary<CanvasCreator, ThunderExtension> _canvasExtensionLookup = new();
+    private readonly Dictionary<InlineCanvasCreator, ThunderExtension> _inlineCanvasExtensionLookup = new();
 
     public ExtensionLoader(ILogger logger, string strPath){
         _logger = logger;
@@ -72,6 +78,13 @@ public class ExtensionLoader{
         }
     }
 
+    public ExtensionArgs GetExtensionConfig(InlineCanvasCreator canvasCreator, ThunderConfig config){
+        if(!_inlineCanvasExtensionLookup.TryGetValue(canvasCreator, out ThunderExtension? extension)){
+            throw new UnreachableException($"There is no extension for command {canvasCreator.GetType().Name}");
+        }
+
+        return GetExtensionConfig(extension, config);
+    }
     public ExtensionArgs GetExtensionConfig(CanvasCreator canvasCreator, ThunderConfig config){
         if(!_canvasExtensionLookup.TryGetValue(canvasCreator, out ThunderExtension? extension)){
             throw new UnreachableException($"There is no extension for command {canvasCreator.GetType().Name}");
@@ -79,6 +92,7 @@ public class ExtensionLoader{
 
         return GetExtensionConfig(extension, config);
     }
+    
     public ExtensionArgs GetExtensionConfig(ICommand command, ThunderConfig config){
         if(!_commandExtensionLookup.TryGetValue(command, out ThunderExtension? extension)){
             throw new UnreachableException($"There is no extension for command {command.Name}");
@@ -87,12 +101,16 @@ public class ExtensionLoader{
         return GetExtensionConfig(extension, config);
     }
 
-    public ExtensionArgs GetExtensionConfig(ThunderExtension extension, ThunderConfig config){
+    public ExtensionArgs GetExtensionConfig(ThunderExtension extension, ThunderConfig config, ILogger? logger = null){
         if(!_extensionPathLookup.TryGetValue(extension, out string? path)){
             throw new UnreachableException("There is no extension path for the extension");
         }
 
-        return new ExtensionArgs(config, path, Program.CreateLogger(extension.GetType()));
+        if(logger is null){
+            logger = Program.CreateLogger(extension.GetType());
+        }
+
+        return new ExtensionArgs(config, path, logger);
     }
 
     public void AddExtension<T>() where T: ThunderExtension{
@@ -110,6 +128,19 @@ public class ExtensionLoader{
             _commandExtensionLookup.Add(command, extension);
             _commands.Add(command.Name, command);
         }
+        
+        foreach(var canvasCreator in extension.GetInlineCanvasCreators()){
+            _inlineCanvasExtensionLookup.Add(canvasCreator, extension);
+            
+            foreach(string fileExtension in canvasCreator.FileExtension){
+                _inlineCanvasCreatorsFileExtensions.Add(fileExtension, canvasCreator);
+            }
+
+            if(canvasCreator.Protocol is not null){
+                _inlineCanvasCreatorsProtocols.Add(canvasCreator.Protocol, canvasCreator);
+            }
+        }
+        
         foreach(var canvasCreator in extension.GetCanvasCreators()){
             _canvasExtensionLookup.Add(canvasCreator, extension);
             
@@ -181,5 +212,26 @@ public class ExtensionLoader{
         }
 
         return creator.Creator(GetExtensionConfig(creator, config), path, altTextElement, out canvasElement);
+    }
+
+    public bool TryGetInlineCanvas(string path, ITextElement? altTextElement, ThunderConfig config, [NotNullWhen(true)] out IInlineCanvasElement? inlineCanvasElement){
+        Regex urlRegex = new(@"(.*):\/\/", RegexOptions.Compiled);
+        var match = urlRegex.Match(path);
+        InlineCanvasCreator? creator = null;
+        if(match.Success){
+            var protocol = match.Groups[1].Value;
+            if(!_inlineCanvasCreatorsProtocols.TryGetValue(protocol, out creator)){
+                inlineCanvasElement = null;
+                return false;
+            }
+        } else{
+            string fileExtension = Path.GetExtension(path).Trim('.');
+            if(!path.Contains('.') || !_inlineCanvasCreatorsFileExtensions.TryGetValue(fileExtension, out creator)){
+                inlineCanvasElement = null;
+                return false;
+            }
+        }
+
+        return creator.Creator(GetExtensionConfig(creator, config), path, altTextElement, out inlineCanvasElement);
     }
 }

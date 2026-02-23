@@ -326,6 +326,25 @@ public partial class MarkdownReader{
                 text.Append(c);
             }
 
+            if(c == '!'){
+                PureTextElement textElement = new(text.ToString());
+                result.Add(textElement);
+                text.Clear();
+                
+                _fileReader.Save();
+                if(!_fileReader.TryGetNext(out char tempC) || tempC != '['){
+                    RecallOrErrorPop();
+                    text.Append(c);
+                    continue;
+                }
+
+                if(!TryReadInlineCanvas(out IInlineCanvasElement? inlineCanvasElement)){
+                    RecallOrErrorPop();
+                    text.Append(c);
+                    continue;
+                }
+            }
+
 
             text.Append(c);
         }
@@ -341,4 +360,5 @@ public partial class MarkdownReader{
         lastChar = c;
         return true;
     }
+
 }

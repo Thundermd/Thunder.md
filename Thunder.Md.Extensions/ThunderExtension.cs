@@ -24,7 +24,9 @@ public abstract class ThunderExtension{
     public virtual IEnumerable<CanvasCreator> GetCanvasCreators(){
         yield break;
     }
-
+    public virtual IEnumerable<InlineCanvasCreator> GetInlineCanvasCreators(){
+        yield break;
+    }
     public virtual void PreCompile(ExtensionArgs args){}
     public virtual void PostCompile(ExtensionArgs args){}
     
