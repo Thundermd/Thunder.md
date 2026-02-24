@@ -3,11 +3,6 @@
 ## Features
 
 ## Planed Features
-- referencing figures, tables, etc. in text
-- additional data to canvas with '@' behind file
-  - for image size
-  - for csv files
-  - (For reference list filter)
 - different unordered table icons
 - citation
   - templating

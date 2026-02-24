@@ -34,7 +34,7 @@ public class MarkdownCanvas: ICanvasElement{
         });
     }
 
-    public static bool Create(ExtensionArgs args, string url, ITextElement? __altText, string? __label, [NotNullWhen(true)] out ICanvasElement? canvasElement){
+    public static bool Create(ExtensionArgs args, string url, ITextElement? __altText, string? __label, Dictionary<string, string?> __parameters, [NotNullWhen(true)] out ICanvasElement? canvasElement){
         string fullPath = Path.Combine(ThunderPaths.Source, url);
 
         canvasElement = new MarkdownCanvas(fullPath);

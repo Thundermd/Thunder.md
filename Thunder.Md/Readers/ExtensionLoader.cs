@@ -193,7 +193,8 @@ public class ExtensionLoader{
         return _commands.Keys;
     }
 
-    public bool TryGetCanvasElement(string path, ITextElement? altTextElement, string? label, ThunderConfig config,
+    public bool TryGetCanvasElement(string path, ITextElement? altTextElement, string? label,
+                                    Dictionary<string, string?> parameters, ThunderConfig config,
                                     [NotNullWhen(true)] out ICanvasElement? canvasElement){
         Regex urlRegex = new(@"(.*):\/\/", RegexOptions.Compiled);
         var match = urlRegex.Match(path);
@@ -212,10 +213,11 @@ public class ExtensionLoader{
             }
         }
 
-        return creator.Creator(GetExtensionConfig(creator, config), path, altTextElement, label, out canvasElement);
+        return creator.Creator(GetExtensionConfig(creator, config), path, altTextElement, label, parameters, out canvasElement);
     }
 
-    public bool TryGetInlineCanvas(string path, ITextElement? altTextElement, string? label, ThunderConfig config,
+    public bool TryGetInlineCanvas(string path, ITextElement? altTextElement, string? label,
+                                   Dictionary<string, string?> parameters, ThunderConfig config,
                                    [NotNullWhen(true)] out IInlineCanvasElement? inlineCanvasElement){
         Regex urlRegex = new(@"(.*):\/\/", RegexOptions.Compiled);
         var match = urlRegex.Match(path);
@@ -234,6 +236,6 @@ public class ExtensionLoader{
             }
         }
 
-        return creator.Creator(GetExtensionConfig(creator, config), path, altTextElement, label, out inlineCanvasElement);
+        return creator.Creator(GetExtensionConfig(creator, config), path, altTextElement, label, parameters, out inlineCanvasElement);
     }
 }
