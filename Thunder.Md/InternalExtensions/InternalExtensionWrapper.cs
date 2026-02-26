@@ -16,7 +16,7 @@ public class InternalExtensionWrapper(string srcPath, ILogger logger): ThunderEx
     public override IEnumerable<CanvasCreator> GetCanvasCreators(){
         yield return new CanvasCreator(ThunderImage.Create, null, "jpg", "jpeg", "png", "gif", "webp");
         yield return new CanvasCreator(MarkdownCanvas.Create, null, "md");
-        yield return new CanvasCreator(IndexCanvas.Create, null, "idx");
+        yield return new CanvasCreator(IndexCanvas.Create, null, "toc", "sections", "content", "figures", "graphics", "tables", "references", "citations", "math", "equations", "formulas");
     }
     
     public override void PreCompile(ExtensionArgs args){

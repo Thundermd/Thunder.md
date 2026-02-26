@@ -206,8 +206,8 @@ public class ExtensionLoader{
                 return false;
             }
         } else{
-            string fileExtension = Path.GetExtension(path).Trim('.');
-            if(!path.Contains('.') || !_canvasCreatorsFileExtensions.TryGetValue(fileExtension, out creator)){
+            string fileExtension = path.Contains('.') ? Path.GetExtension(path).Trim('.') : path;
+            if(!_canvasCreatorsFileExtensions.TryGetValue(fileExtension, out creator)){
                 canvasElement = null;
                 return false;
             }
@@ -229,8 +229,8 @@ public class ExtensionLoader{
                 return false;
             }
         } else{
-            string fileExtension = Path.GetExtension(path).Trim('.');
-            if(!path.Contains('.') || !_inlineCanvasCreatorsFileExtensions.TryGetValue(fileExtension, out creator)){
+            string fileExtension = path.Contains('.') ? Path.GetExtension(path).Trim('.') : path;
+            if(!_inlineCanvasCreatorsFileExtensions.TryGetValue(fileExtension, out creator)){
                 inlineCanvasElement = null;
                 return false;
             }

@@ -41,9 +41,9 @@ public abstract class IndexCanvas: ICanvasElement{
     public static bool Create(ExtensionArgs args, string url, ITextElement? altText, string? __label,
                               Dictionary<string, string?> __parameters,
                               [NotNullWhen(true)] out ICanvasElement? canvasElement){
-        var simplified = Path.GetFileNameWithoutExtension(url).Trim().ToLower();
+        var simplified = url.Trim().ToLower();
         switch(simplified){
-            case "content" or "sections":
+            case "content" or "sections" or "toc":
                 canvasElement = new SectionIndex();
             break;
             case "graphics" or "figures":
@@ -52,10 +52,10 @@ public abstract class IndexCanvas: ICanvasElement{
             case "math" or "equations" or "formulas":
                 canvasElement = new MathIndex();
             break;
-            case "table" or "tables":
+            case "tables":
                 canvasElement = new TableIndex();
             break;
-            case "references":
+            case "references" or "citations":
                 canvasElement = new ReferenceIndex(altText?.Text);
             break;
             default:
