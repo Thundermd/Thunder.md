@@ -343,8 +343,29 @@ public partial class MarkdownReader{
                     text.Append(c);
                     continue;
                 }
+                
+                result.Add(inlineCanvasElement);
+                continue;
             }
 
+
+            if(c == '\\'){
+                PureTextElement textElement = new(text.ToString());
+                result.Add(textElement);
+                text.Clear();
+                _fileReader.Save();
+                char tempC;
+                while(_fileReader.TryGetNext(out tempC) && char.IsWhiteSpace(tempC) && tempC != '\n'){ }
+
+                if(tempC != '\n'){
+                    RecallOrErrorPop();
+                    text.Append(c);
+                    continue;
+                }
+
+                result.Add(new LineBreak());
+                continue;
+            }
 
             text.Append(c);
         }

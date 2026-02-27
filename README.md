@@ -3,7 +3,7 @@
 ## Features
 
 ## Planed Features
-- different unordered table icons
+- different unordered list icons
 - Line Breaks '\' at end of line
 - Blockquotes
 - Insert texts in lists
