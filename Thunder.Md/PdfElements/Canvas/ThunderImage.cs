@@ -46,6 +46,7 @@ public class ThunderImage: ICanvasElement{
                   .MaxHeight(imageHeight, Unit.Millimetre)
                   .Width(imageWidth, Unit.Millimetre)
                   .AlignCenter().AlignBottom()
+                  .AddBorderRadius(config)
                   .SemanticFigure(_caption?.Text ?? "Image").Image(Image.FromFile(FilePath))
                   .FitArea();
             if(config.Project!.GraphicsNumbering is not null && config.Project!.GraphicsNumbering?.Alignment ==  Alignment.Bottom){

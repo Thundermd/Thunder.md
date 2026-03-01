@@ -29,7 +29,8 @@ public class CodeContainer: IPdfElement{
     }
     
     public void Draw(ThunderConfig config, IThunderBuildState state, IContainer container){
-        container.Background(config.Project!.TextColor.ToPdfColor())
+        container.AddBorderRadius(config)
+                 .Background(config.Project!.TextColor.ToPdfColor())
                  .Padding(2, Unit.Millimetre)
                  .Text(text => {
                      text.DefaultTextStyle(style => style.FontFamily("Consolas", "Courier New", "Monaco", "Courier"));

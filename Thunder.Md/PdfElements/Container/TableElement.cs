@@ -30,7 +30,7 @@ public class TableElement: IPdfElement{
             if(_indexItem is not null){
                 tableItem = tableItem.Section(_indexItem.SectionId);
             }
-            tableItem.SemanticTable().Table(table => {
+            tableItem.SemanticTable().AddBorderRadius(config).Table(table => {
                 table.ColumnsDefinition(columns => {
                     for(int x = 0; x < _table.GetLength(0); x++){
                         columns.RelativeColumn();

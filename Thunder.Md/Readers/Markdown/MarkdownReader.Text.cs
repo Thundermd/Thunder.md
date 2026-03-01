@@ -367,6 +367,18 @@ public partial class MarkdownReader{
                 continue;
             }
 
+            if(c == '`'){
+                PureTextElement textElement = new(text.ToString());
+                result.Add(textElement);
+                text.Clear();
+                _fileReader.Save();                
+                
+                if(TryReadTextNotFormatted([new EndChar('`', 1)], endLineManagement, reduceSpaces, null, out string? codeStr, out lastChar)){
+                    result.Add(new InlineCode(codeStr));
+                    continue;
+                }
+            }
+
             text.Append(c);
         }
 
